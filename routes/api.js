@@ -4,8 +4,23 @@ const Ninja = require('../models/ninja');
 
 //get a list of ninjas from the db
 router.get('/ninjas', function(req,res,next){
-  res.send({type:'GET'});
-  });
+  // Ninja.geoNear(
+  //   {type:'Point',coordinates:[parseFloat(req.query.lng), parseFloat(req.query.lat)]},
+  //   {maxDistance:100000,spherical:true}
+  // ).then(function(ninjas){
+  //   res.send(ninjas);
+  // });
+  Ninja.aggregate().near({
+      near: [parseFloat(req.query.lng), parseFloat(req.query.lat)],
+      maxDistance: 100000,
+      spherical: true,
+      distanceField: 'dist.calculated'
+    }).then(function (ninjas) {
+      res.send(ninjas)
+    }).catch(next)﻿
+
+
+});
 
 //update a list of ninjas from the db
 router.post('/ninjas', function(req,res,next){
